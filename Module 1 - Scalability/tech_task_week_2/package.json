@@ -1,0 +1,16 @@
+{
+  "name": "tech_task_week_2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cheerio": "^1.1.0",
+    "rss-parser": "^3.13.0"
+  }
+}

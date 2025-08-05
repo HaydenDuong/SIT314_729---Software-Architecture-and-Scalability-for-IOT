@@ -1,0 +1,14 @@
+{
+  "name": "sit314",
+  "version": "1.0.0",
+  "description": "IoT Data testing",
+  "main": "iotsensor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "hayes_duong",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^8.17.0"
+  }
+}

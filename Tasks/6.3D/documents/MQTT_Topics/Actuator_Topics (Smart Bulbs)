@@ -1,0 +1,14 @@
+iot/commands/{location}/smart_bulb/{bulbId}/control
+
+Examples:
+iot/commands/living_room/smart_bulb/bulb_001/control
+
+Payload:
+{
+  "action": "set_brightness",
+  "brightness": 65,
+  "colorTemperature": 3000,
+  "triggeredBy": "sensor_001",
+  "ambientReading": 450,
+  "timeOfDay": "afternoon"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "web_server",
+  "version": "1.0.0",
+  "description": "A web interface to view IoT data",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "author": "hayes_duong",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

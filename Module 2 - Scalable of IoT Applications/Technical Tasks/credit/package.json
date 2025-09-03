@@ -1,0 +1,16 @@
+{
+  "name": "module_2_credit",
+  "version": "1.0.0",
+  "description": "prototype of forest fire monitoring and alarm system.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"node clients/fire_departments.js\" \"node clients/local_homeowners.js\" \"node clients/news_organizations.js\" \"node clients/social_media.js\" \"node iot_sensors/heat_sensor.js\" \"node iot_sensors/humidity_sensor.js\" \"node iot_sensors/smoke_sensor.js\" \"node iot_sensors/wind_sensor.js\""
+  },
+  "author": "hayes_duong",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^9.2.1",
+    "mqtt": "^5.14.0"
+  }
+}

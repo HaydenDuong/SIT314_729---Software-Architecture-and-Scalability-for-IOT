@@ -1,0 +1,18 @@
+{
+  "name": "credit",
+  "version": "1.0.0",
+  "description": "Module 3 - Credit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"node room_sensors/roomSensorNodes.js\" \"node edgeNode.js\" \"node HVAC.js\""
+  },
+  "author": "hayes_duong",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.11.0",
+    "concurrently": "^9.2.1",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.0"
+  }
+}

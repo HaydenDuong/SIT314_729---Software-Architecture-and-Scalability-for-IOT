@@ -1,0 +1,37 @@
+// Enhanced sensor simulation with time-of-day cycles
+function simulateAmbientLight() {
+  const hour = new Date().getHours();
+  const minute = new Date().getMinutes();
+  
+  // Base light levels by time of day
+  let baseLight;
+  if (hour >= 6 && hour < 8) {        // Dawn
+    baseLight = 200 + (hour - 6) * 150;  // 200-500 lux
+  } else if (hour >= 8 && hour < 17) { // Day
+    baseLight = 500 + Math.sin((hour - 8) * Math.PI / 9) * 300; // 500-800 lux
+  } else if (hour >= 17 && hour < 19) { // Dusk  
+    baseLight = 500 - (hour - 17) * 200;  // 500-100 lux
+  } else {                             // Night
+    baseLight = 10 + Math.random() * 40;   // 10-50 lux
+  }
+  
+  // Add weather and seasonal factors
+  const weatherFactor = getWeatherFactor(); // 0.6 (rainy) to 1.0 (sunny)
+  const seasonalFactor = getSeasonalFactor(); // 0.7 (winter) to 1.0 (summer)
+  const randomVariation = 0.9 + Math.random() * 0.2; // ±10% variation
+  
+  return Math.round(baseLight * weatherFactor * seasonalFactor * randomVariation);
+}
+
+function getWeatherFactor() {
+  const conditions = ['sunny', 'cloudy', 'rainy'];
+  const factors = [1.0, 0.8, 0.6];
+  const randomCondition = Math.floor(Math.random() * conditions.length);
+  return factors[randomCondition];
+}
+
+function getSeasonalFactor() {
+  const month = new Date().getMonth(); // 0-11
+  // Summer (Jun-Aug) = 1.0, Winter (Dec-Feb) = 0.7
+  return 0.7 + 0.3 * Math.sin((month - 2) * Math.PI / 6);
+}

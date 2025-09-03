@@ -1,0 +1,27 @@
+{
+  "name": "iot-smart-lighting-simulator",
+  "version": "1.0.0",
+  "description": "Scalable Smart Home Lighting System - IoT Device Simulator",
+  "main": "sensor-simulator.js",
+  "scripts": {
+    "start": "node sensor-simulator.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "iot",
+    "aws",
+    "mqtt",
+    "smart-home",
+    "lighting",
+    "sensor",
+    "simulator"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "mqtt": "^4.3.7"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

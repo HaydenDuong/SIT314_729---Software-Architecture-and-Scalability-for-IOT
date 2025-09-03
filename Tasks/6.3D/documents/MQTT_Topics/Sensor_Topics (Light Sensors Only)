@@ -1,0 +1,15 @@
+iot/sensors/{location}/ambient_light/{sensorId}/data
+
+Examples:
+iot/sensors/living_room/ambient_light/sensor_001/data
+iot/sensors/kitchen/ambient_light/sensor_002/data
+iot/sensors/bedroom/ambient_light/sensor_003/data
+
+Payload:
+{
+  "sensorId": "sensor_001",
+  "location": "living_room", 
+  "ambientLight": 450,
+  "timestamp": 1678886400000,
+  "batteryLevel": 85
+}

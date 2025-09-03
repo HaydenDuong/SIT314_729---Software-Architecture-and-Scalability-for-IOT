@@ -1,0 +1,8 @@
+**/node_modules/
+**/certificates/
+*.drawio
+*.key
+*.pem
+*.csv
+*.crt
+*.txt

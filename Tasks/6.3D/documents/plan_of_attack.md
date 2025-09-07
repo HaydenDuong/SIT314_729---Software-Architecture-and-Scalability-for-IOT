@@ -51,30 +51,30 @@ This plan outlines the daily tasks for completing the project within a four-week
 **Goal:** Process the incoming data, implement automation logic using Node-RED, and create a complete, simulated loop from sensor input to actuator output.
 
 *   **Day 8: Data Processing with Lambda**
-    *   [ ] Create a Node.js-based AWS Lambda function named `SensorDataProcessor`.
-    *   [ ] Grant the Lambda function's execution role the necessary permissions to write to your `SensorData` DynamoDB table.
-    *   [ ] Modify the AWS IoT Rule from Day 6 to trigger this Lambda function instead.
-    *   [ ] Write code in the Lambda function to parse the incoming sensor data and correctly format it before writing it to the `SensorData` table.
+    *   [X] Create a Node.js-based AWS Lambda function named `SensorDataProcessor`.
+    *   [X] Grant the Lambda function's execution role the necessary permissions to write to your `SensorData` DynamoDB table.
+    *   [X] Modify the AWS IoT Rule from Day 6 to trigger this Lambda function instead.
+    *   [X] Write code in the Lambda function to parse the incoming sensor data and correctly format it before writing it to the `SensorData` table.
 
 *   **Day 9: Actuator Simulation with API Gateway & Lambda**
-    *   [ ] Create a second Node.js Lambda function called `SimulatedLightActuator`. This function's job is to simply log a message like "Light [lightId] turned [ON/OFF]" to CloudWatch Logs.
-    *   [ ] Create an HTTP API Gateway endpoint that triggers this Lambda function. This will be your "dummy API" for controlling the light.
-    *   [ ] Test the API endpoint using a tool like Postman or `curl` to ensure it triggers the Lambda correctly.
+    *   [X] Create a second Node.js Lambda function called `SimulatedLightActuator`. This function's job is to simply log a message like "Light [lightId] turned [ON/OFF]" to CloudWatch Logs.
+    *   [X] Create an HTTP API Gateway endpoint that triggers this Lambda function. This will be your "dummy API" for controlling the light.
+    *   [X] Test the API endpoint using a tool like Postman or `curl` to ensure it triggers the Lambda correctly.
 
 *   **Day 10: Node-RED Setup**
-    *   [ ] Install and run a local instance of Node-RED.
-    *   [ ] Install the necessary nodes: `node-red-contrib-aws-iot-hub` (or a similar MQTT node) and `node-red-dashboard`.
-    *   [ ] Configure an `mqtt in` node in Node-RED to connect to your AWS IoT Core instance and subscribe to the sensor data topics.
+    *   [X] Install and run a local instance of Node-RED.
+    *   [X] Install the necessary nodes: `node-red-contrib-aws-iot-hub` (or a similar MQTT node) and `node-red-dashboard`.
+    *   [X] Configure an `mqtt in` node in Node-RED to connect to your AWS IoT Core instance and subscribe to the sensor data topics.
 
 *   **Day 11: Basic Automation Flow in Node-RED**
-    *   [ ] Create a simple Node-RED flow:
+    *   [X] Create a simple Node-RED flow:
         1.  An `mqtt in` node to receive sensor data from AWS IoT.
         2.  A `switch` node to implement a rule (e.g., "if `payload.light_intensity` < 300").
         3.  An `http request` node that calls your simulated actuator API Gateway endpoint to "turn the light on".
 
 *   **Day 12: Enhancing the Automation Flow & UI**
-    *   [ ] Add a second output to the `switch` node to handle the "turn light off" condition (e.g., if `payload.light_intensity` >= 300).
-    *   [ ] Implement a simple UI using `node-red-dashboard` nodes (`gauge`, `text`, `ui_switch`) to visualize the current sensor value and the simulated light state.
+    *   [X] Add a second output to the `switch` node to handle the "turn light off" condition (e.g., if `payload.light_intensity` >= 300).
+    *   [X] Implement a simple UI using `node-red-dashboard` nodes (`gauge`, `text`, `ui_switch`) to visualize the current sensor value and the simulated light state.
 
 *   **Day 13: Error Handling & State Management**
     *   [ ] Improve your Node-RED flow and Lambda functions with comprehensive error handling (e.g., using `try...catch` blocks and `catch` nodes).

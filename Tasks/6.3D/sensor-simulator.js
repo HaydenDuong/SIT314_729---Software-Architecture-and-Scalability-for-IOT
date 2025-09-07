@@ -246,18 +246,18 @@ class AmbientLightSensor {
     // Simulate natural light patterns
     if (timeInHours >= 6 && timeInHours < 8) {
       // Dawn: gradual increase
-      return 150 + (timeInHours - 6) * 175; // 150-500 lux
+      return 20 + (timeInHours - 6) * 40; // 20-100 lux
     } else if (timeInHours >= 8 && timeInHours < 17) {
       // Daytime: peak light with sun angle simulation
       const midDay = 12.5;
       const sunAngle = Math.cos((timeInHours - midDay) * Math.PI / 8);
-      return 400 + sunAngle * 400; // 400-800 lux
+      return 150 + sunAngle * 100; // 150-350 lux
     } else if (timeInHours >= 17 && timeInHours < 19) {
       // Dusk: gradual decrease
-      return 500 - (timeInHours - 17) * 225; // 500-50 lux
+      return 100 - (timeInHours - 17) * 40; // 100-20 lux
     } else {
       // Night: very low ambient light
-      return 20 + Math.random() * 30; // 20-50 lux
+      return 5 + Math.random() * 15; // 5-20 lux
     }
   }
 

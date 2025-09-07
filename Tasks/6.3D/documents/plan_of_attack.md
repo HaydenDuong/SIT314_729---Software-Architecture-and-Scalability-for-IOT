@@ -77,13 +77,13 @@ This plan outlines the daily tasks for completing the project within a four-week
     *   [X] Implement a simple UI using `node-red-dashboard` nodes (`gauge`, `text`, `ui_switch`) to visualize the current sensor value and the simulated light state.
 
 *   **Day 13: Error Handling & State Management**
-    *   [ ] Improve your Node-RED flow and Lambda functions with comprehensive error handling (e.g., using `try...catch` blocks and `catch` nodes).
-    *   [ ] Implement retry logic and fallback mechanisms in Lambda functions.
-    *   [ ] Create CloudWatch error logging for all components.
-    *   [ ] Add "catch" nodes in Node-RED to handle MQTT connection failures.
-    *   [ ] Create the `LightStates` DynamoDB table.
-    *   [ ] Modify your `SimulatedLightActuator` Lambda to write the new state ("ON" or "OFF") to the `LightStates` table.
-    *   [ ] Add graceful error responses with retry flags for failed operations.
+    *   [X] Improve your Node-RED flow and Lambda functions with comprehensive error handling (e.g., using `try...catch` blocks and `catch` nodes).
+    *   [X] Implement retry logic and fallback mechanisms in Lambda functions.
+    *   [X] Create CloudWatch error logging for all components.
+    *   [X] Add "catch" nodes in Node-RED to handle MQTT connection failures.
+    *   [X] Create the `LightStates` DynamoDB table.
+    *   [X] Modify your `SimulatedLightActuator` Lambda to write the new state ("ON" or "OFF") to the `LightStates` table.
+    *   [X] Add graceful error responses with retry flags for failed operations.
 
 *   **Day 14: Weekly Review & Full Loop Test**
     *   [ ] Test the entire simulated loop end-to-end: Sensor script -> AWS IoT -> Lambda -> DynamoDB -> Node-RED -> API Gateway -> Actuator Lambda -> DynamoDB.

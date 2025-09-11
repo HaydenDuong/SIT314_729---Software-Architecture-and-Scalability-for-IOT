@@ -86,9 +86,9 @@ This plan outlines the daily tasks for completing the project within a four-week
     *   [X] Add graceful error responses with retry flags for failed operations.
 
 *   **Day 14: Weekly Review & Full Loop Test**
-    *   [ ] Test the entire simulated loop end-to-end: Sensor script -> AWS IoT -> Lambda -> DynamoDB -> Node-RED -> API Gateway -> Actuator Lambda -> DynamoDB.
-    *   [ ] Document the completed flow with screenshots and commit all work.
-    *   [ ] Brainstorm the script needed for the scalability test: how to manage multiple device certificates and run concurrent connections.
+    *   [X] Test the entire simulated loop end-to-end: Sensor script -> AWS IoT -> Lambda -> DynamoDB -> Node-RED -> API Gateway -> Actuator Lambda -> DynamoDB.
+    *   [X] Document the completed flow with screenshots and commit all work.
+    *   [X] Brainstorm the script needed for the scalability test: how to manage multiple device certificates and run concurrent connections.
 
 ---
 

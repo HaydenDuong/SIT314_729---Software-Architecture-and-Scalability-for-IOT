@@ -1,0 +1,368 @@
+[
+    {
+        "id": "1f58548fe1a22c86",
+        "type": "tab",
+        "label": "SIT314_729 - 6.3D",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "24fe8505bfd2cba1",
+        "type": "mqtt in",
+        "z": "1f58548fe1a22c86",
+        "name": "",
+        "topic": "iot/sensors/+/+/+",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "f9196b597cd044f7",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 100,
+        "y": 220,
+        "wires": [
+            [
+                "d4bc8b35c722e811",
+                "45011cf66b954ea6",
+                "472e73c4a30d79f7"
+            ]
+        ]
+    },
+    {
+        "id": "81e7538d5c2bfc53",
+        "type": "debug",
+        "z": "1f58548fe1a22c86",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1300,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "d4bc8b35c722e811",
+        "type": "function",
+        "z": "1f58548fe1a22c86",
+        "name": "Smart Light Control Decision Engine",
+        "func": "// Smart Light Control Decision Engine with State Change Detection\nconst sensorData = msg.payload;\nnode.log(`RECEIVED SENSOR DATA: ${JSON.stringify(sensorData)}`);\n\ntry {\n    // Extract sensor values\n    const lightLevel = sensorData.light_intensity || 0;\n    const motion = sensorData.motion_detected || false; // Use actual sensor motion data\n\n    // Use the lightId from sensor data\n    const lightId = sensorData.lightId;\n    \n    const timestamp = sensorData.timestamp || Date.now();\n\n    // Initialize global state storage if it doesn't exist\n    if (!global.lightStates) {\n        global.lightStates = new Map();\n    }\n\n    // Time-based brightness calculation\n    const hour = new Date().getHours();\n    let baseBrightness = 80; // Default\n\n    if (hour >= 6 && hour < 12) {\n        baseBrightness = 60;  // Morning - softer\n    } else if (hour >= 12 && hour < 18) {\n        baseBrightness = 70;  // Afternoon - moderate\n    } else if (hour >= 18 && hour < 22) {\n        baseBrightness = 90;  // Evening - bright\n    } else {\n        baseBrightness = 50;  // Night - dim\n    }\n\n    // Decision Logic\n    let shouldTurnOn = false;\n    let reason = \"\";\n\n    // Rule 1: If motion detected AND light level is low, turn on\n    if (motion && lightLevel < 200) {\n        shouldTurnOn = true;\n        reason = `Motion detected in low light (${lightLevel} lux)`;\n    }\n    // Rule 2: If no motion, turn off\n    else if (!motion) {\n        shouldTurnOn = false;\n        reason = \"No motion detected\";\n    }\n    // Rule 3: If light level is high enough, turn off\n    else if (lightLevel >= 200) {\n        shouldTurnOn = false;\n        reason = \"Sufficient natural light\";\n    }\n\n    // Create new state\n    const newState = {\n        power: shouldTurnOn ? \"ON\" : \"OFF\",\n        brightness: shouldTurnOn ? baseBrightness : 0,\n        reason: reason\n    };\n\n    // Get previous state for this light\n    const previousState = global.lightStates.get(lightId);\n\n    // STATE CHANGE DETECTION: Only proceed if state has changed\n    const stateChanged = !previousState ||\n        previousState.power !== newState.power ||\n        previousState.brightness !== newState.brightness;\n\n    if (stateChanged) {\n        // Update stored state\n        global.lightStates.set(lightId, newState);\n\n        // Create command message (only for state changes)\n        const command = {\n            lightId: lightId,\n            action: shouldTurnOn ? \"turn_on\" : \"turn_off\",\n            brightness: shouldTurnOn ? baseBrightness : 0,\n            colorTemperature: 3000,\n            reason: reason,\n            timestamp: timestamp,\n            sensorData: sensorData,\n            timeOfDay: hour >= 6 && hour < 18 ? \"day\" : \"night\",\n            baseBrightness: baseBrightness,\n            stateChanged: true,\n            previousState: previousState\n        };\n\n        // Set the output\n        msg.payload = command;\n        msg.topic = \"light_control\";\n\n        // Log the state change for monitoring\n        node.log(`STATE CHANGE: ${lightId} ${previousState ? previousState.power : 'UNKNOWN'} → ${newState.power} (${reason})`);\n\n        return msg;\n    } else {\n        // No state change - don't send command or store data\n        node.log(`NO CHANGE: ${lightId} remains ${newState.power} (${reason})`);\n        return null; // Don't trigger downstream nodes\n    }\n\n} catch (error) {\n    // This will trigger the Catch node\n    node.error(\"Error in Smart Light Control Engine: \" + error.message, msg);\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 220,
+        "wires": [
+            [
+                "800811c7dabb207b",
+                "4e1f021ff92dbae6",
+                "f3af085f690505f6",
+                "3a1f1da80e91fdaa"
+            ]
+        ]
+    },
+    {
+        "id": "aed39fa1a6986613",
+        "type": "http request",
+        "z": "1f58548fe1a22c86",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://kfctm4ety1.execute-api.ap-southeast-2.amazonaws.com/lights/{{{payload.lightId}}}/state",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "Content-Type",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            }
+        ],
+        "x": 1130,
+        "y": 220,
+        "wires": [
+            [
+                "81e7538d5c2bfc53"
+            ]
+        ]
+    },
+    {
+        "id": "c3b8dd304dc12075",
+        "type": "catch",
+        "z": "1f58548fe1a22c86",
+        "name": "",
+        "scope": null,
+        "uncaught": false,
+        "x": 620,
+        "y": 400,
+        "wires": [
+            [
+                "3f92258f93e5d34e"
+            ]
+        ]
+    },
+    {
+        "id": "3f92258f93e5d34e",
+        "type": "debug",
+        "z": "1f58548fe1a22c86",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "bde12921f69ee812",
+        "type": "ui_gauge",
+        "z": "1f58548fe1a22c86",
+        "name": "",
+        "group": "66130a3895009594",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Current Ambient Light Level",
+        "label": "lux",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "1000",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "300",
+        "seg2": "600",
+        "diff": false,
+        "className": "",
+        "x": 1040,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "800811c7dabb207b",
+        "type": "ui_text",
+        "z": "1f58548fe1a22c86",
+        "group": "66130a3895009594",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Last Command Reason",
+        "format": "{{msg.payload.reason}}",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1030,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "4e1f021ff92dbae6",
+        "type": "ui_text",
+        "z": "1f58548fe1a22c86",
+        "group": "66130a3895009594",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Light Status",
+        "format": "{{msg.payload.action}} - {{msg.payload.brightness}}%",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 990,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "45011cf66b954ea6",
+        "type": "function",
+        "z": "1f58548fe1a22c86",
+        "name": "Display Ambient Light Function",
+        "func": "const ambientLight = msg.payload.ambientLight || 0;\nmsg.payload = ambientLight;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 40,
+        "wires": [
+            [
+                "bde12921f69ee812"
+            ]
+        ]
+    },
+    {
+        "id": "f3af085f690505f6",
+        "type": "ui_gauge",
+        "z": "1f58548fe1a22c86",
+        "name": "",
+        "group": "66130a3895009594",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Actuator - Light Strength",
+        "label": "%",
+        "format": "{{msg.payload.brightness}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "30",
+        "seg2": "60",
+        "diff": false,
+        "className": "",
+        "x": 970,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "472e73c4a30d79f7",
+        "type": "debug",
+        "z": "1f58548fe1a22c86",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "3a1f1da80e91fdaa",
+        "type": "delay",
+        "z": "1f58548fe1a22c86",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "5",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 930,
+        "y": 220,
+        "wires": [
+            [
+                "aed39fa1a6986613"
+            ]
+        ]
+    },
+    {
+        "id": "f9196b597cd044f7",
+        "type": "mqtt-broker",
+        "name": "AWS IoT Core",
+        "broker": "a3gihr6flc6bqc-ats.iot.ap-southeast-2.amazonaws.com",
+        "port": "8883",
+        "tls": "927c014773b27616",
+        "clientid": "node-red-client",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "66130a3895009594",
+        "type": "ui_group",
+        "name": "Smart Light Control",
+        "tab": "c564d9ed36cdf5b8",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "927c014773b27616",
+        "type": "tls-config",
+        "name": "light_sensor",
+        "cert": "/opt/node-red/certs/light_sensor.cert.pem",
+        "key": "/opt/node-red/certs/light_sensor.private.key",
+        "ca": "/opt/node-red/certs/root-CA.crt",
+        "certname": "",
+        "keyname": "light_sensor.private.key",
+        "caname": "root-CA.crt",
+        "servername": "",
+        "verifyservercert": true,
+        "alpnprotocol": ""
+    },
+    {
+        "id": "c564d9ed36cdf5b8",
+        "type": "ui_tab",
+        "name": "Smart Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "74d0501fa5bb743a",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]

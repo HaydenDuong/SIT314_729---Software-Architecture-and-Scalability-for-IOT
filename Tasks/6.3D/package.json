@@ -19,6 +19,8 @@
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.899.0",
+    "aws-iot-device-sdk": "^2.2.15",
     "mqtt": "^4.3.7"
   },
   "engines": {

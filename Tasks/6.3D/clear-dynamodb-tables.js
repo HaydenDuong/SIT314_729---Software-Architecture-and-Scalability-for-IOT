@@ -74,7 +74,7 @@ async function clearTable(tableName) {
 async function clearAllTables() {
     console.log('🧹 Starting DynamoDB cleanup...\n');
     
-    const tables = ['LightCommands', 'LightStates', 'SensorData'];
+    const tables = ['LightCommands', 'LightStates'];
     
     for (const table of tables) {
         await clearTable(table);

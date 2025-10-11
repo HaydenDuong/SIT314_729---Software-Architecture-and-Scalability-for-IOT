@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sensor-data-service
+  labels:
+    app: sensor-data-service
+    tier: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sensor-data-service
+  template:
+    metadata:
+      labels:
+        app: sensor-data-service
+        tier: backend
+    spec:
+      containers:
+      - name: sensor-data-service
+        image: iot-sensor-data-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3001
+          name: http
+        env:
+        - name: PORT
+          value: "3001"
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: connectionString
+        - name: IOT_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: iot-config
+              key: iotHost
+        - name: CERT_PATH
+          value: "/certs/light_sensor.cert.pem"
+        - name: KEY_PATH
+          value: "/certs/light_sensor.private.key"
+        - name: CA_PATH
+          value: "/certs/root-CA.crt"
+        volumeMounts:
+        - name: aws-iot-certs
+          mountPath: /certs
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: aws-iot-certs
+        secret:
+          secretName: aws-iot-certs
+

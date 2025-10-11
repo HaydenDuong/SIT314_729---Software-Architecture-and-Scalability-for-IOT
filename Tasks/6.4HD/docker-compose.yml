@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # API Gateway
+  api-gateway:
+    build: ./services/api-gateway
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - SENSOR_DATA_SERVICE=http://sensor-data-service:3001
+      - LIGHT_CONTROL_SERVICE=http://light-control-service:3002
+      - AUTOMATION_SERVICE=http://automation-service:3003
+    depends_on:
+      - sensor-data-service
+      - light-control-service
+      - automation-service
+    networks:
+      - iot-network
+    restart: unless-stopped
+
+  # Sensor Data Service
+  sensor-data-service:
+    build: ./services/sensor-data-service
+    container_name: sensor-data-service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGODB_URI=${MONGODB_URI}
+      - IOT_HOST=${IOT_HOST}
+      - CERT_PATH=/app/certificates/light_sensor.cert.pem
+      - KEY_PATH=/app/certificates/light_sensor.private.key
+      - CA_PATH=/app/certificates/root-CA.crt
+    volumes:
+      - ./certificates:/app/certificates:ro
+    networks:
+      - iot-network
+    restart: unless-stopped
+
+  # Light Control Service
+  light-control-service:
+    build: ./services/light-control-service
+    container_name: light-control-service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - MONGODB_URI=${MONGODB_URI}
+    networks:
+      - iot-network
+    restart: unless-stopped
+
+  # Automation Service
+  automation-service:
+    build: ./services/automation-service
+    container_name: automation-service
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - MONGODB_URI=${MONGODB_URI}
+      - IOT_HOST=${IOT_HOST}
+      - CERT_PATH=/app/certificates/light_sensor.cert.pem
+      - KEY_PATH=/app/certificates/light_sensor.private.key
+      - CA_PATH=/app/certificates/root-CA.crt
+      - SENSOR_DATA_SERVICE=http://sensor-data-service:3001
+      - LIGHT_CONTROL_SERVICE=http://light-control-service:3002
+      - LIGHT_THRESHOLD=200
+    volumes:
+      - ./certificates:/app/certificates:ro
+    depends_on:
+      - light-control-service
+    networks:
+      - iot-network
+    restart: unless-stopped
+
+networks:
+  iot-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+
